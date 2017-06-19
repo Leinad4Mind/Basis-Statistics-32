@@ -614,7 +614,7 @@ class main
 
 		if ($options)
 		{
-			$return_str = '<fieldset><label for="' . $select_identifier . '">' . $label_prompt . ': </label><select name=' . $select_identifier . ' id="' . $select_identifier . '">' . $temp_str . '</select> <input class="button2" type="submit" value="' . $submit_prompt . '" /></fieldset>';
+			$return_str = '<fieldset><label for="' . $select_identifier . '">' . $label_prompt . $this->language->lang('COLON') . ' </label><select name=' . $select_identifier . ' id="' . $select_identifier . '">' . $temp_str . '</select> <input class="button2" type="submit" value="' . $submit_prompt . '" /></fieldset>';
 		}
 
 		return $return_str;

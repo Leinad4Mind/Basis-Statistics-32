@@ -78,7 +78,7 @@ class main
 				$start_time = $end_time = $counted_days = 0;
 				if (!$s_month)
 				{
-					$s_month = $this->_bs_date('n-Y', $current_time[0]);
+					$s_month = date('n-Y', $current_time[0]);
 				}
 				$s_month = explode('-', $s_month, 2); //[0] => month, [1] => year
 
@@ -109,7 +109,6 @@ class main
 					$end_time = mktime(0, 0, 0, $s_month[0] + 1, 1, $s_month[1]);
 				}
 
-				$display_month = $this->_bs_date('F Y', $start_time);
 				$start_time	= getdate($start_time);
 				$end_time	= getdate($end_time);
 
@@ -117,7 +116,7 @@ class main
 				$daily_data = array();
 				$first_day = $start_time['mday'];
 				//$last_day is tricky, i do this this way
-				$last_day = $this->_bs_date('j', $end_time[0] - 1);
+				$last_day = date('j', $end_time[0] - 1);
 				$counted_days = $last_day - $first_day + 1;
 				for ($i = $first_day; $i <= $last_day; $i++)
 				{
@@ -135,7 +134,7 @@ class main
 				$result = $this->db->sql_query($sql);
 				while ($row = $this->db->sql_fetchrow($result))
 				{
-					$daily_data[$this->_bs_date('j', $row['time'])]['topics']++;
+					$daily_data[date('j', $row['time'])]['topics']++;
 				}
 				$this->db->sql_freeresult($result);
 
@@ -146,7 +145,7 @@ class main
 				$result = $this->db->sql_query($sql);
 				while ($row = $this->db->sql_fetchrow($result))
 				{
-					$daily_data[$this->_bs_date('j', $row['time'])]['posts']++;
+					$daily_data[date('j', $row['time'])]['posts']++;
 				}
 				$this->db->sql_freeresult($result);
 
@@ -157,7 +156,7 @@ class main
 				$result = $this->db->sql_query($sql);
 				while ($row = $this->db->sql_fetchrow($result))
 				{
-					$daily_data[$this->_bs_date('j', $row['time'])]['user_reg']++;
+					$daily_data[date('j', $row['time'])]['user_reg']++;
 				}
 				$this->db->sql_freeresult($result);
 
@@ -188,7 +187,7 @@ class main
 					foreach ($daily_data as $day => $data)
 					{
 						$this->template->assign_block_vars('periodic_topics_row', array(
-							'TIME_ELEMENT'	=> $this->_bs_date('d F Y', mktime(0, 0, 0, $s_month[0], $day, $s_month[1])),
+							'TIME_ELEMENT'	=> date('d F Y', mktime(0, 0, 0, $s_month[0], $day, $s_month[1])),
 							'COUNT'			=> $data['topics'],
 							'PCT'			=> number_format($data['topics'] / $totals['topics'] * 100, 3),
 							'BARWIDTH'		=> number_format($data['topics'] / $max['topics'] * 100, 1),
@@ -203,7 +202,7 @@ class main
 					foreach ($daily_data as $day => $data)
 					{
 						$this->template->assign_block_vars('periodic_posts_row', array(
-							'TIME_ELEMENT'	=> $this->_bs_date('d F Y', mktime(0, 0, 0, $s_month[0], $day, $s_month[1])),
+							'TIME_ELEMENT'	=> date('d F Y', mktime(0, 0, 0, $s_month[0], $day, $s_month[1])),
 							'COUNT'			=> $data['posts'],
 							'PCT'			=> number_format($data['posts'] / $totals['posts'] * 100, 3),
 							'BARWIDTH'		=> number_format($data['posts'] / $max['posts'] * 100, 1),
@@ -218,7 +217,7 @@ class main
 					foreach ($daily_data as $day => $data)
 					{
 						$this->template->assign_block_vars('periodic_user_regs_row', array(
-							'TIME_ELEMENT'	=> $this->_bs_date('d F Y', mktime(0, 0, 0, $s_month[0], $day, $s_month[1])),
+							'TIME_ELEMENT'	=> date('d F Y', mktime(0, 0, 0, $s_month[0], $day, $s_month[1])),
 							'COUNT'			=> $data['user_reg'],
 							'PCT'			=> number_format($data['user_reg'] / $totals['user_reg'] * 100, 3),
 							'BARWIDTH'		=> number_format($data['user_reg'] / $max['user_reg'] * 100, 1),
@@ -236,7 +235,7 @@ class main
 				while (($temp_epoch = mktime(0, 0, 0, $temp_month, 1, $board_starttime['year'])) <= $current_time[0])
 				{
 					$month_options = array_merge($month_options, array(
-						$this->_bs_date('n-Y', $temp_epoch) => $this->_bs_date('F Y', $temp_epoch)
+						date('n-Y', $temp_epoch) => date('F Y', $temp_epoch)
 					));
 					$temp_month++;
 				}
@@ -250,7 +249,7 @@ class main
 					'AVG_TOPICS'				=> number_format($totals['topics'] / $counted_days, 2),
 					'AVG_POSTS'					=> number_format($totals['posts'] / $counted_days, 2),
 					'AVG_USER_REGS'				=> number_format($totals['user_reg'] / $counted_days, 2),
-					'STATS_MONTH_EXPLAIN'		=> $this->language->lang('STATS_MONTH_EXPLAIN', $display_month),
+					'STATS_MONTH_EXPLAIN'		=> $this->language->lang('STATS_MONTH_EXPLAIN', $start_time['month'] . ' ' . $start_time['year']),
 					'MONTH_SELECT_BOX'			=> $month_select_box,
 				));
 			break;
@@ -304,7 +303,7 @@ class main
 				$offset_start_time = $start_time[0];
 				while ($offset_start_time < $end_time[0])
 				{
-					$monthly_data[$this->_bs_date('F Y', $offset_start_time)] = array('topics' => 0, 'posts' => 0, 'user_reg' => 0);
+					$monthly_data[date('F Y', $offset_start_time)] = array('topics' => 0, 'posts' => 0, 'user_reg' => 0);
 					$counted_months++;
 					$offset_start_time = mktime(0, 0, 0, $start_time['mon'] + $counted_months, 1, $start_time['year']);
 				}
@@ -320,7 +319,7 @@ class main
 				$result = $this->db->sql_query($sql);
 				while ($row = $this->db->sql_fetchrow($result))
 				{
-					$monthly_data[$this->_bs_date('F Y', $row['time'])]['topics']++;
+					$monthly_data[date('F Y', $row['time'])]['topics']++;
 				}
 				$this->db->sql_freeresult($result);
 
@@ -334,7 +333,7 @@ class main
 				$result = $this->db->sql_query($sql);
 				while ($row = $this->db->sql_fetchrow($result))
 				{
-					$monthly_data[$this->_bs_date('F Y', $row['time'])]['posts']++;
+					$monthly_data[date('F Y', $row['time'])]['posts']++;
 				}
 				$this->db->sql_freeresult($result);
 
@@ -348,7 +347,7 @@ class main
 				$result = $this->db->sql_query($sql);
 				while ($row = $this->db->sql_fetchrow($result))
 				{
-					$monthly_data[$this->_bs_date('F Y', $row['time'])]['user_reg']++;
+					$monthly_data[date('F Y', $row['time'])]['user_reg']++;
 				}
 				$this->db->sql_freeresult($result);
 
@@ -464,7 +463,7 @@ class main
 				$offset_start_time = $start_time[0];
 				while ($offset_start_time < $end_time[0])
 				{
-					$yearly_data[$this->_bs_date('Y', $offset_start_time)] = array('topics' => 0, 'posts' => 0, 'user_reg' => 0);
+					$yearly_data[date('Y', $offset_start_time)] = array('topics' => 0, 'posts' => 0, 'user_reg' => 0);
 					$counted_years++;
 					$offset_start_time = mktime(0, 0, 0, 1, 1, $start_time['year'] + $counted_years);
 				}
@@ -476,7 +475,7 @@ class main
 				$result = $this->db->sql_query($sql);
 				while ($row = $this->db->sql_fetchrow($result))
 				{
-					$yearly_data[$this->_bs_date('Y', $row['time'])]['topics']++;
+					$yearly_data[date('Y', $row['time'])]['topics']++;
 				}
 				$this->db->sql_freeresult($result);
 
@@ -486,7 +485,7 @@ class main
 				$result = $this->db->sql_query($sql);
 				while ($row = $this->db->sql_fetchrow($result))
 				{
-					$yearly_data[$this->_bs_date('Y', $row['time'])]['posts']++;
+					$yearly_data[date('Y', $row['time'])]['posts']++;
 				}
 				$this->db->sql_freeresult($result);
 
@@ -496,7 +495,7 @@ class main
 				$result = $this->db->sql_query($sql);
 				while ($row = $this->db->sql_fetchrow($result))
 				{
-					$yearly_data[$this->_bs_date('Y', $row['time'])]['user_reg']++;
+					$yearly_data[date('Y', $row['time'])]['user_reg']++;
 				}
 				$this->db->sql_freeresult($result);
 
@@ -615,14 +614,9 @@ class main
 
 		if ($options)
 		{
-			$return_str = '<fieldset><label for="' . $select_identifier . '">' . $label_prompt . ($this->user->lang['COLON']) . ' </label><select name=' . $select_identifier . ' id="' . $select_identifier . '">' . $temp_str . '</select> <input class="button2" type="submit" value="' . $submit_prompt . '" /></fieldset>';
+			$return_str = '<fieldset><label for="' . $select_identifier . '">' . $label_prompt . $this->language->lang('COLON') . ' </label><select name=' . $select_identifier . ' id="' . $select_identifier . '">' . $temp_str . '</select> <input class="button2" type="submit" value="' . $submit_prompt . '" /></fieldset>';
 		}
 
 		return $return_str;
-	}
-
-	private function _bs_date($format, $timestamp)
-	{
-		return $this->user->format_date($timestamp, $format);
 	}
 }

@@ -69,6 +69,11 @@ class main
 		$s_month	= $this->request->variable('s_month', '');
 		$s_year		= trim($this->request->variable('s_year', ''));
 
+		if (!in_array($mode, array('d', 'm', 'y')))
+		{
+			$mode = 'm';
+		}
+
 		switch ($mode)
 		{
 			case 'd':
@@ -577,8 +582,6 @@ class main
 					'AVG_USER_REGS'				=> number_format($totals['user_reg'] / $counted_years, 2),
 				));
 			break;
-
-			default:
 		}
 
 		$this->template->assign_vars(array(
@@ -615,7 +618,7 @@ class main
 
 		if ($options)
 		{
-			$return_str = '<fieldset><label for="' . $select_identifier . '">' . $label_prompt . ($this->user->lang['COLON']) . ' </label><select name=' . $select_identifier . ' id="' . $select_identifier . '">' . $temp_str . '</select> <input class="button2" type="submit" value="' . $submit_prompt . '" /></fieldset>';
+			$return_str = '<fieldset><label for="' . $select_identifier . '">' . $label_prompt . $this->language->lang('COLON') . ' </label><select name=' . $select_identifier . ' id="' . $select_identifier . '">' . $temp_str . '</select> <input class="button2" type="submit" value="' . $submit_prompt . '" /></fieldset>';
 		}
 
 		return $return_str;

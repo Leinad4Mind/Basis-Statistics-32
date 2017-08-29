@@ -69,6 +69,11 @@ class main
 		$s_month	= $this->request->variable('s_month', '');
 		$s_year		= trim($this->request->variable('s_year', ''));
 
+		if (!in_array($mode, array('d', 'm', 'y')))
+		{
+			$mode = 'm';
+		}
+
 		switch ($mode)
 		{
 			case 'd':
@@ -577,8 +582,6 @@ class main
 					'AVG_USER_REGS'				=> number_format($totals['user_reg'] / $counted_years, 2),
 				));
 			break;
-
-			default:
 		}
 
 		$this->template->assign_vars(array(
